@@ -32,7 +32,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   onClose: [],
-  onConfirm: [item: Iitem | IitemEmpty],
+  onConfirm: [item: Iitem],
 }>()
 
 const onClose = () => {
@@ -53,7 +53,7 @@ const onConfirm = () => {
   if (countDelete.value < '0') return
   emit('onConfirm', { ...props.item, countDelete: countDelete.value ?? 0 })
   onCancel()
-  emit('onClose')
+  onClose()
 }
 
 // TODO: repeat. id: 1

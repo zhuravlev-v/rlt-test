@@ -1,14 +1,11 @@
 <template>
-  <td ref="cell" :id="id" class="cell" v-if="!item.data">
-    <!-- {{ `${item.data}` }} -->
-  </td>
+  <td ref="cell" :id="id" class="cell" v-if="!item.data"></td>
   <td 
     v-else
     ref="cell"
     :id="id"
     @click="onClick(item)" 
-    @dragstart="onDragstart($event, item)" 
-    @pointerup="onPointerup($event, item)"
+    @dragstart="onDragstart($event, item)"
     draggable="true" 
     class="cell cell-filled"
   >
@@ -18,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, computed } from 'vue'
 import type { Iitem, IitemEmpty } from '@/types'
 
 const props = defineProps<{
@@ -38,30 +35,20 @@ const onClick = (item: Iitem) => {
   emit('onItem', item)
 }
 
-// TODO: typing event
-const onDragstart = (event, item: Iitem) => {
-  // event.dataTransfer.dropEffect = 'move'
-  event.dataTransfer.dropEffect = "copy"
-  // event.dataTransfer.effectAllowed = 'move'
-  event.dataTransfer.effectAllowed = "copyMove"
-  event.dataTransfer.setData('itemId', item.id)
-}
-
-const onPointerup = (event, item) => {
-  console.log(event)
-  console.log(item)
+const onDragstart = (event: DragEvent, item: Iitem) => {
+  if (event.dataTransfer?.dropEffect) {
+    event.dataTransfer.dropEffect = 'move'
+  }
+  if (event.dataTransfer?.effectAllowed) {
+    event.dataTransfer.effectAllowed = 'move'
+  }
+  event.dataTransfer?.setData('itemId', String(item.id))
 }
 
 const cell = ref(null)
 
 const id = computed(() => {
   return props.item.id + ''
-})
-
-onMounted(() => {
-  // console.log(cell.value)
-  // console.log(props.item.id)
-  // cell.value.id = props.item.id
 })
 
 </script>

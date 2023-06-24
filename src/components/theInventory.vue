@@ -6,7 +6,7 @@
   @drop="onDrop($event)"
   >
     <tbody>
-      <tr v-for="row of rows">
+      <tr v-for="row of rowsState.rows">
         <InventoryCell v-for="cell of row" :item="cell" @onItem="onItem" />
       </tr>
     </tbody>
@@ -16,80 +16,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, reactive } from 'vue'
+import { ref } from 'vue'
 import type { Ref } from 'vue'
 import InventoryCell from './InventoryCell.vue';
 import InventoryModal from './InventoryModal.vue';
 import type { Iitem, IitemEmpty } from '@/types'
+import { useRowsStore } from '@/stores/rows'
 
-// TODO: shouldn't be any
-const cells: Ref<any[]> = ref(
-  (new Array(25).fill(null)).map((item, index) => {
-    return <Iitem | IitemEmpty>(
-      {
-        id: index,
-        data: null
-      }
-    )
-  })
-)
-
-cells.value[0] = {
-  id: 0,
-  data: {
-    name: 'lala',
-    count: 7,
-    icon: 'brown',
-  }
-}
-cells.value[7] = {
-  id: 7,
-  data: {
-    name: 'lala',
-    count: 5,
-    icon: 'blue',
-  }
-}
-cells.value[23] = {
-  id: 23,
-  data: {
-    name: 'lala',
-    count: 12,
-    icon: 'blue',
-  }
-}
-cells.value[24] = {
-  id: 24,
-  data: {
-    name: 'lala',
-    count: 2,
-    icon: 'green',
-  }
-}
-
-// TODO: can't typing with <(Iitem | IitemEmpty)[][]>
-const rows = computed<(Iitem | IitemEmpty)[][]>(() => {
-  const rows = [
-    new Array(5).fill(null),
-    new Array(5).fill(null),
-    new Array(5).fill(null),
-    new Array(5).fill(null),
-    new Array(5).fill(null),
-  ]
-
-  let p = 0
-  for (let i = 0; i < rows.length; i++) {
-    const row = rows[i]
-
-    for (let j = 0; j < row.length; j++) {
-      row[j] = cells.value[p]
-      p++
-    }
-  }
-
-  return rows
-})
-
+const rowsState = useRowsStore()
 const item: Ref<Iitem | IitemEmpty> = ref({
   id: 0,
   data: null
@@ -105,50 +39,15 @@ const onCloseInventoryModal = () => {
   modalActive.value = false
 }
 
-const onConfirmInventoryModal = (item: Iitem | IitemEmpty) => {
+const onConfirmInventoryModal = (item: Iitem) => {
   console.log(item)
-  const exactItem = cells.value.find((cell: Iitem | IitemEmpty) => {
-    return cell.id === item.id
-  })
-
-  // TODO: handle error
-  if (item?.countDelete >= exactItem.data.count) {
-    cells.value[item.id] = {
-      id: exactItem.id,
-      data: null
-    }
-  }
-  else {
-    cells.value[item.id] = {
-      id: exactItem.id,
-      data: {
-        ...exactItem.data,
-        count: exactItem.data.count - item.countDelete // TODO: handle error
-      }
-    }
-  }
-  // console.log(exactItem)
+  rowsState.deleteItem(item)
 }
 
-// TODO: typing event
-const onDrop = (event) => {
-  const itemId = Number(event.dataTransfer.getData('itemId'))
-  const item = cells.value.find((cell: Iitem) => {
-    if (cell.id === undefined) {
-      return cell.value.id === itemId
-    }
-    else {
-      return cell.id === itemId
-    }
-  })
-  
-  const dropCell = cells.value.find((cell: Iitem) => cell.id === Number(event.target.id))
-  if (dropCell.data === null) {
-    dropCell.data = item.data
-    item.data = null
-  }
+const onDrop = (event: DragEvent) => {
+  const itemId = Number(event.dataTransfer?.getData('itemId'))
+  rowsState.moveItem(itemId, event)
 }
-
 </script>
 
 <style lang='scss' scoped>
