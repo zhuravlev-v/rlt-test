@@ -1,12 +1,13 @@
 <template>
-  <td ref="cell" :id="id" class="cell" v-if="!item.data"></td>
+  <td v-if="!item.data" ref="cell" :id="id" class="cell"></td>
   <td 
-    v-else
-    ref="cell"
+    v-else 
+    ref="cell" 
     :id="id"
     @click="onClick(item)" 
-    @dragstart="onDragstart($event, item)"
-    draggable="true" 
+    @dragstart="onDragstart($event, item)" 
+    @dragenter.prevent @dragover.prevent 
+    draggable="true"
     class="cell cell-filled"
   >
     <img class="item" :src="getImageUrl(item.data?.icon)" alt="" draggable="false">
@@ -43,6 +44,16 @@ const onDragstart = (event: DragEvent, item: Iitem) => {
     event.dataTransfer.effectAllowed = 'move'
   }
   event.dataTransfer?.setData('itemId', String(item.id))
+
+  // if (event.dataTransfer) {
+  //   const div = document.createElement('div')
+  //   div.classList.add('cell-filled')
+  //   const img = new Image()
+  //   img.classList.add('item')
+  //   div.appendChild(img)
+  //   event.dataTransfer.setDragImage(div, 0, 0)
+  // }
+
 }
 
 const cell = ref(null)
@@ -54,6 +65,24 @@ const id = computed(() => {
 </script>
 
 <style lang='scss' scoped>
+@mixin grab-cursor {
+  cursor: url('https://www.google.com/intl/en_ALL/mapfiles/openhand.cur'), all-scroll;
+  cursor: -webkit-grab;
+  cursor: -moz-grab;
+  cursor: -o-grab;
+  cursor: -ms-grab;
+  cursor: grab;
+}
+
+@mixin grabbing-cursor {
+  cursor: url('https://www.google.com/intl/en_ALL/mapfiles/closedhand.cur'), all-scroll;
+  cursor: -webkit-grabbing;
+  cursor: -moz-grabbing;
+  cursor: -o-grabbing;
+  cursor: -ms-grabbing;
+  cursor: grabbing;
+}
+
 .cell {
   border: 1px solid #4D4D4D;
   width: 100px;
@@ -66,6 +95,17 @@ const id = computed(() => {
 .cell-filled {
   cursor: pointer;
   z-index: 2;
+  @include grab-cursor;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #2F2F2F;
+  }
+
+  &:active {
+    @include grabbing-cursor;
+    border-radius: 24px;
+  }
 }
 
 .item {

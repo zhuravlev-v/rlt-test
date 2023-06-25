@@ -1,9 +1,10 @@
 <template>
   <table 
-  class="inventory"
-  @dragenter.prevent 
-  @dragover.prevent
-  @drop="onDrop($event)"
+    class="inventory"
+    @dragstart="onDragstart" 
+    @dragenter.prevent 
+    @dragover.prevent
+    @drop="onDrop($event)"
   >
     <tbody>
       <tr v-for="row of rowsState.rows">
@@ -44,6 +45,11 @@ const onConfirmInventoryModal = (item: Iitem) => {
   rowsState.deleteItem(item)
 }
 
+const onDragstart = (event: DragEvent) => {
+  console.log('onDragstart')
+  onCloseInventoryModal()
+}
+
 const onDrop = (event: DragEvent) => {
   const itemId = Number(event.dataTransfer?.getData('itemId'))
   rowsState.moveItem(itemId, event)
@@ -59,7 +65,6 @@ const onDrop = (event: DragEvent) => {
   border-spacing: 0;
   border: 1px solid #4D4D4D;
   position: relative;
-  overflow: hidden;
 
   &:deep() {
     & tr:first-child {

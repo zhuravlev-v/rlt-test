@@ -34,6 +34,7 @@ import { ref } from 'vue'
 .main {
   grid-column: 2/3;
   grid-row: 1;
+  overflow: hidden;
 }
 
 .footer {

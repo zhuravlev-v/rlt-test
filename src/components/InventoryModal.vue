@@ -170,6 +170,10 @@ button {
   font-weight: 500;
   grid-column: span 2;
 
+  &:focus {
+    outline: 1px solid #4D4D4D;
+  }
+
   &::-webkit-outer-spin-button,
   &::-webkit-inner-spin-button {
     -webkit-appearance: none;
