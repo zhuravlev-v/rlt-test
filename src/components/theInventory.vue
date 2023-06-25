@@ -11,8 +11,12 @@
         <InventoryCell v-for="cell of row" :item="cell" @onItem="onItem" />
       </tr>
     </tbody>
-    <InventoryModal :item="item" :isActive="modalActive" @onClose="onCloseInventoryModal"
-      @onConfirm="onConfirmInventoryModal" />
+    <InventoryModal 
+      :item="item" 
+      :isActive="modalActive" 
+      @onClose="onCloseInventoryModal"
+      @onConfirm="onConfirmInventoryModal"
+    />
   </table>
 </template>
 
@@ -41,12 +45,10 @@ const onCloseInventoryModal = () => {
 }
 
 const onConfirmInventoryModal = (item: Iitem) => {
-  console.log(item)
   rowsState.deleteItem(item)
 }
 
 const onDragstart = (event: DragEvent) => {
-  console.log('onDragstart')
   onCloseInventoryModal()
 }
 

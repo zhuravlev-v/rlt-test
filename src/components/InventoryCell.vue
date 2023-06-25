@@ -27,7 +27,6 @@ const emit = defineEmits<{
   onItem: [item: Iitem]
 }>()
 
-// TODO: repeat. id: 1
 const getImageUrl = (name: string) => {
   return new URL(`../assets/images/item-${name}.png`, import.meta.url).href
 }

@@ -79,7 +79,6 @@ export const useRowsStore = defineStore(
 
       const countDelete: number = Number(item.countDelete ?? 0)
 
-      // TODO: handle error
       if (countDelete >= exactItem.data.count) {
         cells.value[item.id] = {
           id: exactItem.id,
@@ -91,7 +90,7 @@ export const useRowsStore = defineStore(
           id: exactItem.id,
           data: {
             ...exactItem.data,
-            count: exactItem.data.count - countDelete // TODO: handle error
+            count: exactItem.data.count - countDelete
           }
         }
       }

@@ -49,14 +49,21 @@ const onCancel = () => {
 }
 
 const onConfirm = () => {
-  // TODO: zero shouldn't be string, number only
-  if (countDelete.value < '0') return
-  emit('onConfirm', { ...props.item, countDelete: countDelete.value ?? 0 })
+  if (Number(countDelete.value) < 0) return
+  const item = { 
+    id: props.item.id,
+    data: {
+      name: String(props.item.data?.name),
+      count: Number(props.item.data?.count),
+      icon: String(props.item.data?.icon),
+    },
+    countDelete: Number(countDelete.value)
+  }
+  emit('onConfirm', item)
   onCancel()
   onClose()
 }
 
-// TODO: repeat. id: 1
 const getImageUrl = (name?: string) => {
   if (!name) return ''
   return new URL(`../assets/images/item-${name}.png`, import.meta.url).href
